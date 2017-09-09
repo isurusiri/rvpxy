@@ -1,7 +1,7 @@
 {
-	port: '',
-	defaultRoute: '',
-	routes: [
-		{case: '', uri: ''}
+	"port": "",
+	"defaultRoute": "",
+	"routes": [
+		{"case": "", "uri": ""}
 	]
 }
