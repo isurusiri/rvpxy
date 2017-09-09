@@ -1,0 +1,7 @@
+{
+	port: '',
+	defaultRoute: '',
+	routes: [
+		{case: '', uri: ''}
+	]
+}
