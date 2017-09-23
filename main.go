@@ -24,9 +24,9 @@ type Prox struct {
 func New(target string, defaultRoutePath string) *Prox {
 	url, _ := url.Parse(target)
 	urlDefault, _ := url.Parse(defaultRoutePath)
-	fmt.Println("[revpxy] proxy initialized")
-	fmt.Println("[revpxy] default path : ", urlDefault)
-	fmt.Println("[revpxy] redirection path : ", url)
+	fmt.Println("[Transporter] proxy initialized")
+	fmt.Println("[Transporter] default path : ", urlDefault)
+	fmt.Println("[Transporter] redirection path : ", url)
 	return &Prox{target: url, proxy: httputil.NewSingleHostReverseProxy(url), defaultPath: httputil.NewSingleHostReverseProxy(urlDefault)}
 }
 
@@ -61,27 +61,27 @@ func (p *Prox) getProjection(srcURL string) string {
 func (p *Prox) handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-GoProxy", "GoProxy")
 
-	fmt.Println("[revpxy] a request reached")
+	fmt.Println("[Transporter] a request reached")
 	color.Set(color.FgHiGreen)
-	fmt.Println("[revpxy] request : ", r)
+	fmt.Println("[Transporter] request : ", r)
 	color.Unset()
-	fmt.Println("[revpxy] evaluating redirection path")
+	fmt.Println("[Transporter] evaluating redirection path")
 
 	if p.routePatterns == nil || p.parseWhiteList(r) {
 		color.Set(color.FgGreen)
 		color.Unset()
 		// url rewrite
 		projection := p.getProjection(r.URL.String())
-		fmt.Println("[revpxy] " + projection + " subpath detected")
+		fmt.Println("[Transporter] " + projection + " subpath detected")
 		rewriteURL(r, projection)
 		r.Host = r.URL.Host
 		color.Set(color.FgHiGreen)
-		fmt.Println("[revpxy] rerouting request : ", r)
+		fmt.Println("[Transporter] rerouting request : ", r)
 		color.Unset()
 		// end url rewrite
 		p.proxy.ServeHTTP(w, r)
 	} else {
-		fmt.Println("[revpxy] default path detected")
+		fmt.Println("[Transporter] default path detected")
 		http.DefaultServeMux.ServeHTTP(w, r)
 	}
 }
@@ -106,10 +106,10 @@ func main() {
 	flag.Parse()
 
 	color.Set(color.FgGreen)
-	fmt.Println("[revpxy] server will run on : ", *port)
-	fmt.Println("[revpxy] Default server : ", *defaultServerURL)
-	fmt.Println("[revpxy] redirecting to : ", *url)
-	fmt.Println("[revpxy] accepted routes : ", *routesRegexp)
+	fmt.Println("[Transporter] server will run on : ", *port)
+	fmt.Println("[Transporter] Default server : ", *defaultServerURL)
+	fmt.Println("[Transporter] redirecting to : ", *url)
+	fmt.Println("[Transporter] accepted routes : ", *routesRegexp)
 	color.Unset()
 
 	reg, _ := regexp.Compile(*routesRegexp)
@@ -121,6 +121,6 @@ func main() {
 
 	// server
 	http.HandleFunc("/", proxy.handle)
-	fmt.Println("[revpxy] handlers registered to : " + *port + "/")
+	fmt.Println("[Transporter] handlers registered to : " + *port + "/")
 	http.ListenAndServe(*port, nil)
 }
