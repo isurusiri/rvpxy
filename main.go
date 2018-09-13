@@ -9,6 +9,7 @@ import (
 	"regexp"
 )
 
+// reverse proxy struct
 type Prox struct {
 	// target url of reverse proxy
 	target *url.URL

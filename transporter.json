@@ -2,6 +2,6 @@
 	"port": "",
 	"defaultRoute": "",
 	"routes": [
-		{"case": "", "uri": ""}
+		{"detect": "", "uri": ""}
 	]
 }
