@@ -7,8 +7,6 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"regexp"
-
-	"github.com/fatih/color"
 )
 
 type Prox struct {
@@ -39,8 +37,8 @@ func (p *Prox) parseWhiteList(r *http.Request) bool {
 	return false
 }
 
-func rewriteURL(r *http.Request, projection string) {
-	switch projection {
+func rewriteURL(r *http.Request, subpath string) {
+	switch subpath {
 	case "<ROUTE_URI>":
 		r.RequestURI = ""
 		r.URL, _ = url.Parse("<NEW_URL>")
@@ -49,7 +47,7 @@ func rewriteURL(r *http.Request, projection string) {
 	}
 }
 
-func (p *Prox) getProjection(srcURL string) string {
+func (p *Prox) getSubpath(srcURL string) string {
 	for _, regexp := range p.routePatterns {
 		if regexp.MatchString(srcURL) {
 			return regexp.String()
@@ -62,22 +60,16 @@ func (p *Prox) handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-GoProxy", "GoProxy")
 
 	fmt.Println("[Transporter] a request reached")
-	color.Set(color.FgHiGreen)
 	fmt.Println("[Transporter] request : ", r)
-	color.Unset()
 	fmt.Println("[Transporter] evaluating redirection path")
 
 	if p.routePatterns == nil || p.parseWhiteList(r) {
-		color.Set(color.FgGreen)
-		color.Unset()
 		// url rewrite
-		projection := p.getProjection(r.URL.String())
-		fmt.Println("[Transporter] " + projection + " subpath detected")
-		rewriteURL(r, projection)
+		subpath := p.getSubpath(r.URL.String())
+		fmt.Println("[Transporter] " + subpath + " subpath detected")
+		rewriteURL(r, subpath)
 		r.Host = r.URL.Host
-		color.Set(color.FgHiGreen)
 		fmt.Println("[Transporter] rerouting request : ", r)
-		color.Unset()
 		// end url rewrite
 		p.proxy.ServeHTTP(w, r)
 	} else {
@@ -105,12 +97,10 @@ func main() {
 
 	flag.Parse()
 
-	color.Set(color.FgGreen)
 	fmt.Println("[Transporter] server will run on : ", *port)
 	fmt.Println("[Transporter] Default server : ", *defaultServerURL)
 	fmt.Println("[Transporter] redirecting to : ", *url)
 	fmt.Println("[Transporter] accepted routes : ", *routesRegexp)
-	color.Unset()
 
 	reg, _ := regexp.Compile(*routesRegexp)
 	routes := []*regexp.Regexp{reg}
