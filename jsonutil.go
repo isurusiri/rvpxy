@@ -15,7 +15,8 @@ type PxRoute struct {
 
 type PxTransporter struct {
 	Port         string    `json:"port"`
-	DefaultRoute string    `json:"defaultPort"`
+	DefaultRoute string    `json:"defaultRoute"`
+	Domain       string    `json:"domain"`
 	Routes       []PxRoute `json:"routes"`
 }
 

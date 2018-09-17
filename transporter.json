@@ -1,6 +1,7 @@
 {
 	"port": "",
 	"defaultRoute": "",
+	"domain": "",
 	"routes": [
 		{"detect": "", "uri": ""}
 	]
