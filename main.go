@@ -81,20 +81,18 @@ func (p *Prox) handle(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	const (
-		defaultPort             = ":8001"
 		defaultPortUsage        = "default server port, ':8001', ':8080'..."
-		defaultTarget           = "<TARGET_URL>"
 		defaultTargetUsage      = "default redirect url, '<TARGET_URL>'"
-		defaultServer           = "<DEFAULT_URL>"
 		defaultServerUsage      = "default server is at, '<DEFAULT_URL>'"
-		defaultWhiteRoutes      = `<ROUTE_URI>`
 		defaultWhiteRoutesUsage = "list of white route as regexp, '/path1*,/path2*...."
 	)
 
-	port := flag.String("port", defaultPort, defaultPortUsage)
-	url := flag.String("url", defaultTarget, defaultTargetUsage)
-	defaultServerURL := flag.String("*defaultServer", defaultServer, defaultServerUsage)
-	routesRegexp := flag.String("routes", defaultWhiteRoutes, defaultWhiteRoutesUsage)
+	transporter := readTransporter()
+
+	port := flag.String("port", transporter.Port, defaultPortUsage)
+	url := flag.String("url", transporter.DefaultRoute, defaultTargetUsage)
+	defaultServerURL := flag.String("*defaultServer", transporter.Domain, defaultServerUsage)
+	routesRegexp := flag.String("routes", transporter.Routes, defaultWhiteRoutesUsage)
 
 	flag.Parse()
 
